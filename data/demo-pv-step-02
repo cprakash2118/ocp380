@@ -1,0 +1,354 @@
+[student@workstation ~]$ podman images
+REPOSITORY  TAG         IMAGE ID    CREATED     SIZE
+[student@workstation ~]$ 
+[student@workstation ~]$  podman run --name mysql-basic -e MYSQL_USER=user1 -e MYSQL_PASSWORD=mypa55  -e MYSQL_DATABASE=items -e MYSQL_ROOT_PASSWORD=r00tpa55  -d quay.io/cprakash2118/rhel8-mysql-80
+Trying to pull quay.io/cprakash2118/rhel8-mysql-80:latest...
+Getting image source signatures
+Copying blob d5b7b74dca85 done  
+Copying blob d068c7b25a52 done  
+Copying blob 4cabd5a735ea done  
+Copying blob 98c6420b6425 done  
+Copying config b3fd32b4b6 done  
+Writing manifest to image destination
+Storing signatures
+09472bafd4386defa0336a1ffa8237db9e6142175175d80d465c2a896aa95906
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman images
+REPOSITORY                           TAG         IMAGE ID      CREATED      SIZE
+quay.io/cprakash2118/rhel8-mysql-80  latest      b3fd32b4b646  2 years ago  626 MB
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ podman  ps
+CONTAINER ID  IMAGE                                       COMMAND     CREATED         STATUS         PORTS       NAMES
+09472bafd438  quay.io/cprakash2118/rhel8-mysql-80:latest  run-mysqld  16 seconds ago  Up 16 seconds              mysql-basic
+[student@workstation ~]$ 
+[student@workstation ~]$ podman exec -it mysql-basic bash 
+bash-4.4$ uname -n 
+09472bafd438
+bash-4.4$ env | grep MYSQL
+MYSQL_PREFIX=/usr
+MYSQL_PASSWORD=mypa55
+MYSQL_DATABASE=items
+MYSQL_ROOT_PASSWORD=r00tpa55
+MYSQL_USER=user1
+MYSQL_VERSION=8.0
+bash-4.4$ 
+bash-4.4$ mysql -uuser1 -pmypa55
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.26 Source distribution
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| items              |
++--------------------+
+2 rows in set (0.00 sec)
+
+mysql> show tables;
+ERROR 1046 (3D000): No database selected
+mysql> use items;
+Database changed
+mysql> show tables;
+Empty set (0.01 sec)
+
+mysql>  CREATE TABLE Projects (id int NOT NULL,name varchar(255) DEFAULT NULL,code varchar(255) DEFAULT NULL,PRIMARY KEY (id));
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> show tables;
++-----------------+
+| Tables_in_items |
++-----------------+
+| Projects        |
++-----------------+
+1 row in set (0.01 sec)
+
+mysql> select * from Projects ;
+Empty set (0.01 sec)
+
+mysql>  insert into Projects (id, name, code) values (1,'DevOps-I','DO180');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> 
+mysql>  insert into Projects (id, name, code) values (2,'DevOps-II','DO280');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> 
+mysql>  insert into Projects (id, name, code) values (3,'DevOps-III','DO380');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from Projects ;
++----+------------+-------+
+| id | name       | code  |
++----+------------+-------+
+|  1 | DevOps-I   | DO180 |
+|  2 | DevOps-II  | DO280 |
+|  3 | DevOps-III | DO380 |
++----+------------+-------+
+3 rows in set (0.00 sec)
+
+mysql> exit
+Bye
+bash-4.4$ mysql -uuser1 -pmypa55
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 9
+Server version: 8.0.26 Source distribution
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> select * from Projects ;
+ERROR 1046 (3D000): No database selected
+mysql> use items;
+Database changed
+mysql> 
+mysql> select * from Projects ;
++----+------------+-------+
+| id | name       | code  |
++----+------------+-------+
+|  1 | DevOps-I   | DO180 |
+|  2 | DevOps-II  | DO280 |
+|  3 | DevOps-III | DO380 |
++----+------------+-------+
+3 rows in set (0.00 sec)
+
+mysql> exit
+Bye
+bash-4.4$ exit
+exit
+[student@workstation ~]$ podman ps -af 
+Error: flag needs an argument: 'f' in -f
+See 'podman ps --help'
+[student@workstation ~]$ podman ps -f 
+ancestor=  exited=    id=        name=      since=     until=     
+before=    health=    label=     network=   status=    volume=    
+[student@workstation ~]$ podman ps -f 
+ancestor=  exited=    id=        name=      since=     until=     
+before=    health=    label=     network=   status=    volume=    
+[student@workstation ~]$ podman rm -af 
+09472bafd4386defa0336a1ffa8237db9e6142175175d80d465c2a896aa95906
+[student@workstation ~]$ podman  images
+REPOSITORY                           TAG         IMAGE ID      CREATED      SIZE
+quay.io/cprakash2118/rhel8-mysql-80  latest      b3fd32b4b646  2 years ago  626 MB
+[student@workstation ~]$ podman  ps -a
+CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+[student@workstation ~]$  podman run --name mysql-basic -e MYSQL_USER=user1 -e MYSQL_PASSWORD=mypa55  -e MYSQL_DATABASE=items -e MYSQL_ROOT_PASSWORD=r00tpa55  -d quay.io/cprakash2118/rhel8-mysql-80
+af9f2a7d2c6cf2398d2a2855e9411e8cfb31effc414d8f7e9f601a2db3fccf26
+[student@workstation ~]$ podman exec -it mysql-basic bash 
+bash-4.4$ mysql -uuser1 -pmypa55;
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.26 Source distribution
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use tests;
+ERROR 1044 (42000): Access denied for user 'user1'@'%' to database 'tests'
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| items              |
++--------------------+
+2 rows in set (0.01 sec)
+
+mysql> use itens;
+ERROR 1044 (42000): Access denied for user 'user1'@'%' to database 'itens'
+mysql> use items;
+Database changed
+mysql> show tables;
+Empty set (0.00 sec)
+
+mysql> exit
+Bye
+bash-4.4$ exit
+exit
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ 
+[student@workstation ~]$ mkdir -pv /home/student/local/mysql
+mkdir: created directory '/home/student/local'
+mkdir: created directory '/home/student/local/mysql'
+[student@workstation ~]$ sudo semanage fcontext -a -t container_file_t '/home/student/local/mysql(/.*)?'
+[student@workstation ~]$ man semanage fcontext 
+[student@workstation ~]$ sudo restorecon -R /home/student/local/mysql
+[student@workstation ~]$  ls -ldZ /home/student/local/mysql
+drwxr-xr-x. 2 student student unconfined_u:object_r:container_file_t:s0 6 Jun 30 04:48 /home/student/local/mysql
+[student@workstation ~]$ podman unshare chown 27:27 /home/student/local/mysql
+[student@workstation ~]$  ls -ldZ /home/student/local/mysql
+drwxr-xr-x. 2 100026 100026 unconfined_u:object_r:container_file_t:s0 6 Jun 30 04:48 /home/student/local/mysql
+[student@workstation ~]$  podman run --name mysql-basic -e MYSQL_USER=user1 -e MYSQL_PASSWORD=mypa55  -e MYSQL_DATABASE=items -e MYSQL_ROOT_PASSWORD=r00tpa55 -v /home/student/local/mysql:/var/lib/mysql/data  -d quay.io/cprakash2118/rhel8-mysql-80
+Error: creating container storage: the container name "mysql-basic" is already in use by af9f2a7d2c6cf2398d2a2855e9411e8cfb31effc414d8f7e9f601a2db3fccf26. You have to remove that container to be able to reuse that name: that name is already in use
+[student@workstation ~]$ podman  ps -a
+CONTAINER ID  IMAGE                                       COMMAND     CREATED         STATUS         PORTS       NAMES
+af9f2a7d2c6c  quay.io/cprakash2118/rhel8-mysql-80:latest  run-mysqld  16 minutes ago  Up 16 minutes              mysql-basic
+[student@workstation ~]$ podman  rm -af 
+af9f2a7d2c6cf2398d2a2855e9411e8cfb31effc414d8f7e9f601a2db3fccf26
+[student@workstation ~]$  podman run --name mysql-basic -e MYSQL_USER=user1 -e MYSQL_PASSWORD=mypa55  -e MYSQL_DATABASE=items -e MYSQL_ROOT_PASSWORD=r00tpa55 -v /home/student/local/mysql:/var/lib/mysql/data  -d quay.io/cprakash2118/rhel8-mysql-80
+[student@workstation ~]$  podman run --name mysql-basic -e MYSQL_USER=user1 -e MYSQL_PASSWORD=mypa55  -e MYSQL_DATABASE=items -e MYSQL_ROOT_PASSWORD=r00tpa55 -v /home/student/local/mysql:/var/lib/mysql/data  -d quay.io/cprakash2118/rhel8-mysql-80
+ab9729c92c85bd96c6282eb4f029ad67ea01d46717b9e1ea8da755c91f66ef90
+[student@workstation ~]$ podman images
+REPOSITORY                           TAG         IMAGE ID      CREATED      SIZE
+quay.io/cprakash2118/rhel8-mysql-80  latest      b3fd32b4b646  2 years ago  626 MB
+[student@workstation ~]$ 
+[student@workstation ~]$ podman  ps
+CONTAINER ID  IMAGE                                       COMMAND     CREATED         STATUS         PORTS       NAMES
+ab9729c92c85  quay.io/cprakash2118/rhel8-mysql-80:latest  run-mysqld  14 seconds ago  Up 15 seconds              mysql-basic
+[student@workstation ~]$ 
+[student@workstation ~]$ podman  exec -it mysql-basic bash 
+bash-4.4$ mysql -uuser1 -pmypa55
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.26 Source distribution
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> how databases;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'how databases' at line 1
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| items              |
++--------------------+
+2 rows in set (0.01 sec)
+
+mysql> use items;
+Database changed
+mysql> show tables;
+Empty set (0.01 sec)
+
+mysql> CREATE TABLE Projects (id int NOT NULL,name varchar(255) DEFAULT NULL,code varchar(255) DEFAULT NULL,PRIMARY KEY (id));
+Query OK, 0 rows affected (0.23 sec)
+
+mysql>  
+mysql> 
+mysql>  insert into Projects (id, name, code) values (1,'DevOps-I','DO180');
+
+Query OK, 1 row affected (0.04 sec)
+
+mysql> 
+mysql>  insert into Projects (id, name, code) values (2,'DevOps-II','DO280');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> 
+mysql>  insert into Projects (id, name, code) values (3,'DevOps-III','DO380');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> select * from Projects 
+    -> ;
++----+------------+-------+
+| id | name       | code  |
++----+------------+-------+
+|  1 | DevOps-I   | DO180 |
+|  2 | DevOps-II  | DO280 |
+|  3 | DevOps-III | DO380 |
++----+------------+-------+
+3 rows in set (0.01 sec)
+
+mysql> exit
+Bye
+bash-4.4$ exit
+exit
+[student@workstation ~]$ podman  ps
+CONTAINER ID  IMAGE                                       COMMAND     CREATED        STATUS        PORTS       NAMES
+ab9729c92c85  quay.io/cprakash2118/rhel8-mysql-80:latest  run-mysqld  2 minutes ago  Up 2 minutes              mysql-basic
+[student@workstation ~]$ podman rm -af
+ab9729c92c85bd96c6282eb4f029ad67ea01d46717b9e1ea8da755c91f66ef90
+[student@workstation ~]$ podman  ps
+CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+[student@workstation ~]$ podman  ps -a
+CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+[student@workstation ~]$  podman run --name mysql-basic -e MYSQL_USER=user1 -e MYSQL_PASSWORD=mypa55  -e MYSQL_DATABASE=items -e MYSQL_ROOT_PASSWORD=r00tpa55 -v /home/student/local/mysql:/var/lib/mysql/data  -d quay.io/cprakash2118/rhel8-mysql-80
+f7db8f822e021a59c9f90fd8a959f69cd8e0b3fecda8272f492368b75e59b4a9
+[student@workstation ~]$ podman  ps 
+CONTAINER ID  IMAGE                                       COMMAND     CREATED        STATUS        PORTS       NAMES
+f7db8f822e02  quay.io/cprakash2118/rhel8-mysql-80:latest  run-mysqld  4 seconds ago  Up 4 seconds              mysql-basic
+[student@workstation ~]$ podman  exec -it mysql-basic bash 
+bash-4.4$ mysql -uuser1 -pmypa55;
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.26 Source distribution
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| items              |
++--------------------+
+2 rows in set (0.01 sec)
+
+mysql> use items;
+Database changed
+mysql> show tables;
++-----------------+
+| Tables_in_items |
++-----------------+
+| Projects        |
++-----------------+
+1 row in set (0.01 sec)
+
+mysql> select * from Projects ;
++----+------------+-------+
+| id | name       | code  |
++----+------------+-------+
+|  1 | DevOps-I   | DO180 |
+|  2 | DevOps-II  | DO280 |
+|  3 | DevOps-III | DO380 |
++----+------------+-------+
+3 rows in set (0.01 sec)
+
+mysql> exit
+Bye
+bash-4.4$ exit
+exit
+[student@workstation ~]$ 
+

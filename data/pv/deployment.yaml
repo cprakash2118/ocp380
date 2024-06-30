@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  labels:
+    app: pv-app 
+  name: pv-app 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+       app: pv-app
+  template: 
+   metadata:
+     labels: 
+        app: pv-app
+   spec:
+    volumes: 
+      - name: pv-volume
+        persistentVolumeClaim: 
+           claimName: my-pvc-vol
+    containers: 
+      - image: image-registry.openshift-image-registry.svc:5000/openshift/httpd@sha256:a20cdb120d70cba18f19f7dc4790dffe8d45bac97ad72f65acc62a9a15771c05
+        name: pv-app
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+
+        volumeMounts: 
+          - name: pv-volume
+            mountPath: /var/www/html/
+
+           #   spec.template.spec.containers[0].volumeMounts[0].name: Not found: "pv-vol"

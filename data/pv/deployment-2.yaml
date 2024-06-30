@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  labels:
+    app: pv-app 
+  name: pv-app-deployment-02
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+       app: pv-app
+  template: 
+   metadata:
+     labels: 
+        app: pv-app
+   spec:
+    containers: 
+      - image: httpd:latest
+        name: pv-app
+        ports:
+        - containerPort: 8080
+          protocol: TCP
